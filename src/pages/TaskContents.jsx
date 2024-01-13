@@ -17,25 +17,54 @@ export default function TaskContents() {
   }
   const [tasks, setTasks] = useState([initialTask])
   const [showAddTask, setShowAddTask] = useState(false)
-  // const [addTask, setAddTask] = useState(null)
+  const [updateTask, setUpdateTask] = useState(null)
 
   // add new task
-  const handleAddTask = (newTask) => {
-    setTasks([...tasks, newTask])
+  const handleAddTask = (newTask, isAdd) => {
+    if (isAdd) {
+      setTasks([...tasks, newTask])
+    } else {
+      setTasks(
+        tasks.map((task) => {
+          if (task.id === newTask.id) {
+            return newTask
+          }
+          return task
+        })
+      )
+    }
     setShowAddTask(false)
   }
 
-  // show add task
+  // handle edit task
+  const handleEditTask = (task) => {
+    setUpdateTask(task)
+    setShowAddTask(true)
+  }
+
+  // close modal
+  const handleCloseTask = () => {
+    setShowAddTask(false)
+  }
 
   return (
     <>
       <section className="mb-20" id="tasks">
-        {showAddTask && <AddTask handleAddTask={handleAddTask} />}
+        {showAddTask && (
+          <AddTask
+            handleAddTask={handleAddTask}
+            handleCloseTask={handleCloseTask}
+            updateTask={updateTask}
+          />
+        )}
         <div className="container">
           <Search />
           <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
-            <TaskHeader setShowAddTask={setShowAddTask} />
-            <TaskList tasks={tasks} />
+            <TaskHeader
+              setShowAddTask={setShowAddTask}
+              handleEditTask={handleEditTask}
+            />
+            <TaskList tasks={tasks} handleEditTask={handleEditTask} />
           </div>
         </div>
       </section>
